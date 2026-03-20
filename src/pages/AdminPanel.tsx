@@ -1,55 +1,88 @@
 import { useState, useEffect } from "react";
 import { useSiteContent } from "@/contexts/SiteContentContext";
 import { SiteContent } from "@/lib/siteContent";
-import { ArrowLeft, Save, Eye, Loader2, LayoutDashboard, Type, FileText, Phone as PhoneIcon, Image, Link } from "lucide-react";
+import { signIn, signOut, getSession } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
+import {
+  ArrowLeft, Save, Eye, Loader2, LayoutDashboard, Type, FileText,
+  Phone as PhoneIcon, Image, Link, LogOut, BookOpen, ImageIcon,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-
-const ADMIN_PASSWORD = "roots@2025";
+import type { Session } from "@supabase/supabase-js";
 
 export default function AdminPanel() {
   const navigate = useNavigate();
-  const [authed, setAuthed] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
   const { content, loading, updateContent } = useSiteContent();
   const [form, setForm] = useState<SiteContent>(content);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    const s = sessionStorage.getItem("roots-admin");
-    if (s === "true") setAuthed(true);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setAuthLoading(false);
+    });
+    getSession().then((s) => {
+      setSession(s);
+      setAuthLoading(false);
+    });
+    return () => subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
     if (!loading) setForm(content);
   }, [loading, content]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pass === ADMIN_PASSWORD) {
-      setAuthed(true);
-      sessionStorage.setItem("roots-admin", "true");
-    } else {
-      toast.error("Incorrect password");
+    setLoginLoading(true);
+    try {
+      await signIn(email, pass);
+    } catch (err: any) {
+      toast.error(err.message || "Login failed");
+    } finally {
+      setLoginLoading(false);
     }
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    setSession(null);
   };
 
   const handleSave = async () => {
     setSaving(true);
     const ok = await updateContent(form);
     setSaving(false);
-    if (ok) {
-      toast.success("Changes saved to database!");
-    } else {
-      toast.error("Failed to save. Check Supabase connection.");
-    }
+    ok ? toast.success("Changes saved!") : toast.error("Failed to save.");
   };
 
-  const update = (key: keyof SiteContent, value: string) => {
+  const update = (key: keyof SiteContent, value: any) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  if (!authed) {
+  const updateCourse = (index: number, field: string, value: string) => {
+    const courses = [...form.courses];
+    courses[index] = { ...courses[index], [field]: value };
+    update("courses", courses);
+  };
+
+  // Auth loading
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Login screen
+  if (!session) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
         <form onSubmit={handleLogin} className="bg-card rounded-2xl shadow-xl p-8 w-full max-w-sm border border-border">
@@ -59,7 +92,14 @@ export default function AdminPanel() {
             </div>
           </div>
           <h2 className="text-2xl font-display font-bold text-foreground mb-1 text-center">Admin Panel</h2>
-          <p className="text-sm text-muted-foreground mb-6 text-center">Enter password to manage your website</p>
+          <p className="text-sm text-muted-foreground mb-6 text-center">Sign in to manage your website</p>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            className="w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 mb-3 transition-shadow"
+          />
           <input
             type="password"
             value={pass}
@@ -69,9 +109,11 @@ export default function AdminPanel() {
           />
           <button
             type="submit"
-            className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold hover:opacity-90 active:scale-[0.97] transition-all"
+            disabled={loginLoading}
+            className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold hover:opacity-90 active:scale-[0.97] transition-all disabled:opacity-60 flex items-center justify-center gap-2"
           >
-            Login
+            {loginLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+            {loginLoading ? "Signing in..." : "Sign In"}
           </button>
         </form>
       </div>
@@ -92,10 +134,7 @@ export default function AdminPanel() {
       <div className="bg-card/80 backdrop-blur-md border-b border-border sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/")}
-              className="p-2 rounded-xl hover:bg-muted active:scale-95 transition-all"
-            >
+            <button onClick={() => navigate("/")} className="p-2 rounded-xl hover:bg-muted active:scale-95 transition-all">
               <ArrowLeft className="h-5 w-5" />
             </button>
             <div className="flex items-center gap-2">
@@ -104,19 +143,14 @@ export default function AdminPanel() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <a
-              href="/"
-              target="_blank"
-              className="hidden sm:inline-flex items-center gap-2 border border-border px-4 py-2 rounded-xl text-sm font-medium hover:bg-muted transition-colors"
-            >
-              <Eye className="h-4 w-4" />
-              Preview
+            <span className="hidden sm:inline text-xs text-muted-foreground">{session.user.email}</span>
+            <button onClick={handleLogout} className="p-2 rounded-xl hover:bg-muted active:scale-95 transition-all text-muted-foreground hover:text-foreground">
+              <LogOut className="h-4 w-4" />
+            </button>
+            <a href="/" target="_blank" className="hidden sm:inline-flex items-center gap-2 border border-border px-4 py-2 rounded-xl text-sm font-medium hover:bg-muted transition-colors">
+              <Eye className="h-4 w-4" /> Preview
             </a>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.97] transition-all disabled:opacity-60"
-            >
+            <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.97] transition-all disabled:opacity-60">
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               {saving ? "Saving..." : "Save"}
             </button>
@@ -129,6 +163,13 @@ export default function AdminPanel() {
         <Section title="Hero Section" icon={<Type className="h-5 w-5 text-primary" />}>
           <Field label="Main Headline" value={form.heroTitle} onChange={(v) => update("heroTitle", v)} />
           <Field label="Subtitle" value={form.heroSubtitle} onChange={(v) => update("heroSubtitle", v)} textarea />
+          <Field label="Background Image URL (leave empty for default)" value={form.heroBgUrl} onChange={(v) => update("heroBgUrl", v)} />
+          {form.heroBgUrl && (
+            <div className="mt-2">
+              <p className="text-xs text-muted-foreground mb-2">Background Preview:</p>
+              <img src={form.heroBgUrl} alt="Hero BG" className="h-24 w-40 rounded-xl object-cover border border-border" />
+            </div>
+          )}
         </Section>
 
         {/* Registration */}
@@ -140,7 +181,7 @@ export default function AdminPanel() {
         <Section title="About Section" icon={<FileText className="h-5 w-5 text-primary" />}>
           <Field label="Section Title" value={form.aboutTitle} onChange={(v) => update("aboutTitle", v)} />
           <Field label="Description" value={form.aboutText} onChange={(v) => update("aboutText", v)} textarea />
-          <Field label="Image URL (leave empty for default)" value={form.aboutImageUrl} onChange={(v) => update("aboutImageUrl", v)} />
+          <Field label="Image URL" value={form.aboutImageUrl} onChange={(v) => update("aboutImageUrl", v)} />
           <Field label="Video URL (optional, replaces image)" value={form.aboutVideoUrl} onChange={(v) => update("aboutVideoUrl", v)} />
           {form.aboutImageUrl && (
             <div className="mt-2">
@@ -148,6 +189,23 @@ export default function AdminPanel() {
               <img src={form.aboutImageUrl} alt="Preview" className="h-24 w-32 rounded-xl object-cover border border-border" />
             </div>
           )}
+        </Section>
+
+        {/* Courses */}
+        <Section title="Course Posters" icon={<BookOpen className="h-5 w-5 text-primary" />}>
+          {form.courses.map((course, i) => (
+            <div key={i} className="border border-border rounded-xl p-4 space-y-3">
+              <p className="text-sm font-semibold text-foreground">{course.title}</p>
+              <Field label="Title" value={course.title} onChange={(v) => updateCourse(i, "title", v)} />
+              <Field label="Description" value={course.description} onChange={(v) => updateCourse(i, "description", v)} textarea />
+              <Field label="Poster Image URL" value={course.imageUrl} onChange={(v) => updateCourse(i, "imageUrl", v)} />
+              {course.imageUrl && (
+                <div className="mt-1">
+                  <img src={course.imageUrl} alt={course.title} className="h-24 w-32 rounded-lg object-cover border border-border" />
+                </div>
+              )}
+            </div>
+          ))}
         </Section>
 
         {/* Contact */}
@@ -158,7 +216,7 @@ export default function AdminPanel() {
         </Section>
 
         {/* Branding */}
-        <Section title="Branding" icon={<Image className="h-5 w-5 text-primary" />}>
+        <Section title="Branding" icon={<ImageIcon className="h-5 w-5 text-primary" />}>
           <Field label="Logo URL" value={form.logoUrl} onChange={(v) => update("logoUrl", v)} />
           {form.logoUrl && (
             <div className="mt-2">
@@ -169,7 +227,7 @@ export default function AdminPanel() {
         </Section>
 
         <div className="text-center text-xs text-muted-foreground pb-8 pt-4">
-          Data is stored in Supabase. Changes reflect immediately after save.
+          Changes reflect immediately after save.
         </div>
       </div>
     </div>
@@ -188,19 +246,8 @@ function Section({ title, icon, children }: { title: string; icon: React.ReactNo
   );
 }
 
-function Field({
-  label,
-  value,
-  onChange,
-  textarea,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  textarea?: boolean;
-}) {
-  const cls =
-    "w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all";
+function Field({ label, value, onChange, textarea }: { label: string; value: string; onChange: (v: string) => void; textarea?: boolean }) {
+  const cls = "w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all";
   return (
     <div>
       <label className="text-sm font-medium text-foreground block mb-1.5">{label}</label>

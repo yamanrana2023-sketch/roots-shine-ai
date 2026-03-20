@@ -4,6 +4,7 @@ import heroBg from "@/assets/hero-bg.jpg";
 
 export default function HeroSection() {
   const { content } = useSiteContent();
+  const bgImage = content.heroBgUrl || heroBg;
 
   const stats = [
     { icon: Users, value: "500+", label: "Students" },
@@ -14,7 +15,7 @@ export default function HeroSection() {
   return (
     <section id="home" className="relative min-h-screen flex items-center pt-16 overflow-hidden">
       <div className="absolute inset-0">
-        <img src={heroBg} alt="" className="w-full h-full object-cover" />
+        <img src={bgImage} alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-foreground/70" />
       </div>
 
