@@ -1,7 +1,7 @@
-import { getSiteContent } from "@/lib/siteContent";
+import { useSiteContent } from "@/contexts/SiteContentContext";
 
 export default function Footer() {
-  const content = getSiteContent();
+  const { content } = useSiteContent();
 
   return (
     <footer className="bg-foreground text-primary-foreground/80 py-12">

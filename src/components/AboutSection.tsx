@@ -1,10 +1,10 @@
 import { CheckCircle } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { getSiteContent } from "@/lib/siteContent";
+import { useSiteContent } from "@/contexts/SiteContentContext";
 import aboutImg from "@/assets/about-img.jpg";
 
 export default function AboutSection() {
-  const content = getSiteContent();
+  const { content } = useSiteContent();
   const sectionRef = useScrollReveal<HTMLElement>();
 
   const highlights = [
@@ -20,7 +20,6 @@ export default function AboutSection() {
     <section id="about" ref={sectionRef} className="section-padding section-alt opacity-0">
       <div className="container mx-auto">
         <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Image / Video */}
           <div className="relative">
             {content.aboutVideoUrl ? (
               <video
@@ -43,7 +42,6 @@ export default function AboutSection() {
             )}
           </div>
 
-          {/* Text */}
           <div>
             <p className="text-sm font-semibold text-accent uppercase tracking-widest mb-3">
               Who We Are

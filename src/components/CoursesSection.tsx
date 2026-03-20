@@ -1,13 +1,13 @@
 import { BookOpen, GraduationCap, Atom, Trophy } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { getSiteContent } from "@/lib/siteContent";
+import { useSiteContent } from "@/contexts/SiteContentContext";
 
 const iconMap: Record<string, React.ElementType> = {
   BookOpen, GraduationCap, Atom, Trophy,
 };
 
 export default function CoursesSection() {
-  const content = getSiteContent();
+  const { content } = useSiteContent();
   const sectionRef = useScrollReveal<HTMLElement>();
 
   return (

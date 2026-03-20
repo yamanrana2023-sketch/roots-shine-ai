@@ -1,4 +1,3 @@
-// Default site content - admin panel saves overrides to localStorage
 export interface SiteContent {
   heroTitle: string;
   heroSubtitle: string;
@@ -14,7 +13,7 @@ export interface SiteContent {
   logoUrl: string;
 }
 
-const defaultContent: SiteContent = {
+export const defaultContent: SiteContent = {
   heroTitle: "Nurturing Minds, Building Futures",
   heroSubtitle: "The Roots Foundation Coaching Classes provides quality education with personalized attention to help every student achieve their academic goals.",
   aboutTitle: "About The Roots Foundation",
@@ -33,22 +32,3 @@ const defaultContent: SiteContent = {
   googleMapUrl: "https://maps.app.goo.gl/H9WNhs6qLhXBNm88A",
   logoUrl: "https://i.ibb.co/HDM1Gv1S/x.jpg",
 };
-
-const STORAGE_KEY = "roots-foundation-content";
-
-export function getSiteContent(): SiteContent {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      return { ...defaultContent, ...JSON.parse(stored) };
-    }
-  } catch {}
-  return defaultContent;
-}
-
-export function saveSiteContent(content: Partial<SiteContent>) {
-  const current = getSiteContent();
-  const updated = { ...current, ...content };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-  return updated;
-}
