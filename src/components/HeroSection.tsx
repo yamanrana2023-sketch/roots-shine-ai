@@ -24,7 +24,7 @@ export default function HeroSection() {
         <div className="max-w-3xl">
           <div className="animate-reveal-up inline-flex items-center gap-2 bg-accent/20 border border-accent/30 text-accent-foreground px-5 py-2 rounded-full text-sm font-semibold mb-8 backdrop-blur-sm">
             <span className="h-2 w-2 rounded-full bg-accent animate-pulse" />
-            Admissions Open 2025-26
+            Admissions Open 2026-27
           </div>
 
           <h1 className="animate-reveal-up delay-100 text-primary-foreground text-balance leading-[1.05]" style={{ fontSize: "clamp(2.25rem, 5vw, 3.75rem)" }}>
