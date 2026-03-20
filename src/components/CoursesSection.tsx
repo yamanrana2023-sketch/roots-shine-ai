@@ -27,18 +27,29 @@ export default function CoursesSection() {
             return (
               <div
                 key={course.title}
-                className="group bg-card rounded-2xl p-6 text-left shadow-sm hover:shadow-lg transition-shadow duration-300 border border-border/50"
+                className="group bg-card rounded-2xl overflow-hidden text-left shadow-sm hover:shadow-lg transition-shadow duration-300 border border-border/50"
                 style={{ animationDelay: `${i * 80}ms` }}
               >
-                <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors duration-300">
-                  <Icon className="h-6 w-6 text-primary" />
+                {course.imageUrl && (
+                  <div className="aspect-[4/3] overflow-hidden">
+                    <img
+                      src={course.imageUrl}
+                      alt={course.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                )}
+                <div className="p-6">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-300">
+                    <Icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-display font-bold text-foreground">
+                    {course.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                    {course.description}
+                  </p>
                 </div>
-                <h3 className="text-lg font-display font-bold text-foreground">
-                  {course.title}
-                </h3>
-                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                  {course.description}
-                </p>
               </div>
             );
           })}
