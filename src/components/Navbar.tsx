@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Menu, X, Phone } from "lucide-react";
-import { getSiteContent } from "@/lib/siteContent";
+import { useSiteContent } from "@/contexts/SiteContentContext";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const content = getSiteContent();
+  const { content } = useSiteContent();
 
   const links = [
     { label: "Home", href: "#home" },
@@ -27,7 +27,6 @@ export default function Navbar() {
           </span>
         </a>
 
-        {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
             <a
@@ -47,7 +46,6 @@ export default function Navbar() {
           </a>
         </div>
 
-        {/* Mobile toggle */}
         <button
           onClick={() => setOpen(!open)}
           className="md:hidden p-2 rounded-lg hover:bg-muted active:scale-95 transition-all"
@@ -57,7 +55,6 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile menu */}
       {open && (
         <div className="md:hidden bg-background border-t border-border px-4 pb-4 animate-reveal-up">
           {links.map((l) => (

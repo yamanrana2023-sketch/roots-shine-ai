@@ -1,9 +1,9 @@
 import { Phone, MapPin, ExternalLink } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { getSiteContent } from "@/lib/siteContent";
+import { useSiteContent } from "@/contexts/SiteContentContext";
 
 export default function ContactSection() {
-  const content = getSiteContent();
+  const { content } = useSiteContent();
   const sectionRef = useScrollReveal<HTMLElement>();
 
   return (
@@ -17,7 +17,6 @@ export default function ContactSection() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          {/* Phone */}
           <a
             href={`tel:${content.contactPhone}`}
             className="group flex flex-col items-center bg-card rounded-2xl p-8 shadow-sm hover:shadow-lg transition-shadow duration-300 border border-border/50 text-center"
@@ -29,7 +28,6 @@ export default function ContactSection() {
             <p className="mt-2 text-muted-foreground text-sm">{content.contactPhone}</p>
           </a>
 
-          {/* Address */}
           <a
             href={content.googleMapUrl}
             target="_blank"
@@ -45,9 +43,8 @@ export default function ContactSection() {
             </p>
           </a>
 
-          {/* Map Link */}
           <a
-            href={content.googleMapUrl}
+            href={`https://wa.me/${content.contactPhone.replace(/[^0-9]/g, '')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="group flex flex-col items-center bg-card rounded-2xl p-8 shadow-sm hover:shadow-lg transition-shadow duration-300 border border-border/50 text-center"
@@ -55,8 +52,8 @@ export default function ContactSection() {
             <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
               <ExternalLink className="h-6 w-6 text-primary" />
             </div>
-            <h3 className="font-display font-bold text-foreground">Google Maps</h3>
-            <p className="mt-2 text-muted-foreground text-sm">View on Google Maps →</p>
+            <h3 className="font-display font-bold text-foreground">WhatsApp</h3>
+            <p className="mt-2 text-muted-foreground text-sm">Message us on WhatsApp</p>
           </a>
         </div>
       </div>

@@ -1,9 +1,9 @@
 import { ArrowRight, Users, Award, BookOpen } from "lucide-react";
-import { getSiteContent } from "@/lib/siteContent";
+import { useSiteContent } from "@/contexts/SiteContentContext";
 import heroBg from "@/assets/hero-bg.jpg";
 
 export default function HeroSection() {
-  const content = getSiteContent();
+  const { content } = useSiteContent();
 
   const stats = [
     { icon: Users, value: "500+", label: "Students" },
@@ -13,7 +13,6 @@ export default function HeroSection() {
 
   return (
     <section id="home" className="relative min-h-screen flex items-center pt-16 overflow-hidden">
-      {/* Background image with overlay */}
       <div className="absolute inset-0">
         <img src={heroBg} alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-foreground/70" />
@@ -21,7 +20,6 @@ export default function HeroSection() {
 
       <div className="relative container mx-auto px-4 py-20 md:py-32">
         <div className="max-w-3xl">
-          {/* Badge */}
           <div className="animate-reveal-up inline-flex items-center gap-2 bg-primary/20 border border-primary/30 text-primary-foreground px-4 py-1.5 rounded-full text-sm font-medium mb-8 backdrop-blur-sm">
             <span className="h-2 w-2 rounded-full bg-accent animate-pulse" />
             Admissions Open 2025-26
@@ -35,7 +33,6 @@ export default function HeroSection() {
             {content.heroSubtitle}
           </p>
 
-          {/* CTAs */}
           <div className="animate-reveal-up delay-300 mt-10 flex flex-wrap gap-4">
             <a
               href={content.registrationFormUrl}
@@ -54,7 +51,6 @@ export default function HeroSection() {
             </a>
           </div>
 
-          {/* Stats */}
           <div className="animate-reveal-up delay-400 mt-16 flex gap-8 md:gap-12">
             {stats.map((s) => (
               <div key={s.label} className="text-center">

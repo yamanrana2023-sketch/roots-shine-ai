@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { SiteContentProvider } from "@/contexts/SiteContentContext";
 import Index from "./pages/Index.tsx";
 import AdminPanel from "./pages/AdminPanel.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -15,11 +16,13 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/admin" element={<AdminPanel />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <SiteContentProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/admin" element={<AdminPanel />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </SiteContentProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
