@@ -7,7 +7,7 @@ export interface SiteContent {
   aboutImageUrl: string;
   aboutVideoUrl: string;
   registrationFormUrl: string;
-  courses: { title: string; description: string; icon: string; imageUrl: string }[];
+  posters: string[];
   contactPhone: string;
   contactAddress: string;
   googleMapUrl: string;
@@ -23,11 +23,11 @@ export const defaultContent: SiteContent = {
   aboutImageUrl: "",
   aboutVideoUrl: "",
   registrationFormUrl: "https://forms.gle/9fruRLUtUhTMhmTRA",
-  courses: [
-    { title: "Class 6-8 Foundation", description: "Strong foundation building with focus on NCERT concepts, regular tests, and interactive learning for middle school students.", icon: "BookOpen", imageUrl: "https://i.ibb.co/GmfQ3KC/x.jpg" },
-    { title: "Class 9-10 Board Prep", description: "Comprehensive preparation for CBSE board exams with detailed study material, mock tests, and personalized attention.", icon: "GraduationCap", imageUrl: "https://i.ibb.co/fG1z9KHj/x.jpg" },
-    { title: "Class 11-12 Science", description: "Expert coaching for Physics, Chemistry, Mathematics & Biology with competitive exam orientation.", icon: "Atom", imageUrl: "https://i.ibb.co/wrNbx9C9/x.jpg" },
-    { title: "Competitive Exams", description: "Specialized coaching for JEE, NEET, and other competitive examinations with proven strategies.", icon: "Trophy", imageUrl: "https://i.ibb.co/gLZGfXWw/x.jpg" },
+  posters: [
+    "https://i.ibb.co/GmfQ3KC/x.jpg",
+    "https://i.ibb.co/fG1z9KHj/x.jpg",
+    "https://i.ibb.co/wrNbx9C9/x.jpg",
+    "https://i.ibb.co/gLZGfXWw/x.jpg",
   ],
   contactPhone: "+91 8285262890",
   contactAddress: "Godawari Marg, Shiv Vihar, Block G, Prem Nagar, Najafgarh, New Delhi, Delhi, 110043",
