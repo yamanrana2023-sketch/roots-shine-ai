@@ -5,7 +5,7 @@ import { signIn, signOut, getSession } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import {
   ArrowLeft, Save, Eye, Loader2, LayoutDashboard, Type, FileText,
-  Phone as PhoneIcon, Image, Link, LogOut, BookOpen, ImageIcon,
+  Phone as PhoneIcon, Image as ImageIcon, Link, LogOut, ImagePlus, Trash2, Plus,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -66,13 +66,20 @@ export default function AdminPanel() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const updateCourse = (index: number, field: string, value: string) => {
-    const courses = [...form.courses];
-    courses[index] = { ...courses[index], [field]: value };
-    update("courses", courses);
+  const addPoster = () => {
+    update("posters", [...form.posters, ""]);
   };
 
-  // Auth loading
+  const updatePoster = (index: number, value: string) => {
+    const posters = [...form.posters];
+    posters[index] = value;
+    update("posters", posters);
+  };
+
+  const removePoster = (index: number) => {
+    update("posters", form.posters.filter((_, i) => i !== index));
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-muted">
@@ -81,7 +88,6 @@ export default function AdminPanel() {
     );
   }
 
-  // Login screen
   if (!session) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
@@ -143,8 +149,8 @@ export default function AdminPanel() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <span className="hidden sm:inline text-xs text-muted-foreground">{session.user.email}</span>
-            <button onClick={handleLogout} className="p-2 rounded-xl hover:bg-muted active:scale-95 transition-all text-muted-foreground hover:text-foreground">
+            <span className="hidden sm:inline text-xs text-muted-foreground truncate max-w-[160px]">{session.user.email}</span>
+            <button onClick={handleLogout} className="p-2 rounded-xl hover:bg-muted active:scale-95 transition-all text-muted-foreground hover:text-foreground" title="Logout">
               <LogOut className="h-4 w-4" />
             </button>
             <a href="/" target="_blank" className="hidden sm:inline-flex items-center gap-2 border border-border px-4 py-2 rounded-xl text-sm font-medium hover:bg-muted transition-colors">
@@ -166,7 +172,7 @@ export default function AdminPanel() {
           <Field label="Background Image URL (leave empty for default)" value={form.heroBgUrl} onChange={(v) => update("heroBgUrl", v)} />
           {form.heroBgUrl && (
             <div className="mt-2">
-              <p className="text-xs text-muted-foreground mb-2">Background Preview:</p>
+              <p className="text-xs text-muted-foreground mb-2">Preview:</p>
               <img src={form.heroBgUrl} alt="Hero BG" className="h-24 w-40 rounded-xl object-cover border border-border" />
             </div>
           )}
@@ -186,26 +192,44 @@ export default function AdminPanel() {
           {form.aboutImageUrl && (
             <div className="mt-2">
               <p className="text-xs text-muted-foreground mb-2">Preview:</p>
-              <img src={form.aboutImageUrl} alt="Preview" className="h-24 w-32 rounded-xl object-cover border border-border" />
+              <img src={form.aboutImageUrl} alt="About" className="h-24 w-32 rounded-xl object-cover border border-border" />
             </div>
           )}
         </Section>
 
-        {/* Courses */}
-        <Section title="Course Posters" icon={<BookOpen className="h-5 w-5 text-primary" />}>
-          {form.courses.map((course, i) => (
-            <div key={i} className="border border-border rounded-xl p-4 space-y-3">
-              <p className="text-sm font-semibold text-foreground">{course.title}</p>
-              <Field label="Title" value={course.title} onChange={(v) => updateCourse(i, "title", v)} />
-              <Field label="Description" value={course.description} onChange={(v) => updateCourse(i, "description", v)} textarea />
-              <Field label="Poster Image URL" value={course.imageUrl} onChange={(v) => updateCourse(i, "imageUrl", v)} />
-              {course.imageUrl && (
-                <div className="mt-1">
-                  <img src={course.imageUrl} alt={course.title} className="h-24 w-32 rounded-lg object-cover border border-border" />
+        {/* Course Posters */}
+        <Section title="Course Posters" icon={<ImagePlus className="h-5 w-5 text-primary" />}>
+          <p className="text-xs text-muted-foreground mb-3">Add poster image URLs. These will show as a scrollable gallery on the website.</p>
+          <div className="space-y-3">
+            {form.posters.map((url, i) => (
+              <div key={i} className="flex gap-3 items-start">
+                <div className="flex-1">
+                  <input
+                    value={url}
+                    onChange={(e) => updatePoster(i, e.target.value)}
+                    placeholder={`Poster ${i + 1} URL`}
+                    className="w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+                  />
+                  {url && (
+                    <img src={url} alt={`Poster ${i + 1}`} className="mt-2 h-20 rounded-lg object-cover border border-border" />
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
+                <button
+                  onClick={() => removePoster(i)}
+                  className="mt-2 p-2 rounded-lg hover:bg-destructive/10 text-destructive/70 hover:text-destructive transition-colors"
+                  title="Remove poster"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={addPoster}
+            className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+          >
+            <Plus className="h-4 w-4" /> Add Poster
+          </button>
         </Section>
 
         {/* Contact */}
