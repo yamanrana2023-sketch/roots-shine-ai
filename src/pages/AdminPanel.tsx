@@ -233,6 +233,11 @@ export default function AdminPanel() {
           </button>
         </Section>
 
+        {/* Study Material */}
+        <Section title="Manage Study Material" icon={<GraduationCap className="h-5 w-5 text-primary" />}>
+          <AdminStudyMaterial />
+        </Section>
+
         {/* Contact */}
         <Section title="Contact Info" icon={<PhoneIcon className="h-5 w-5 text-primary" />}>
           <Field label="Phone Number" value={form.contactPhone} onChange={(v) => update("contactPhone", v)} />
