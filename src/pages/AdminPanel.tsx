@@ -5,8 +5,9 @@ import { signIn, signOut, getSession } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import {
   ArrowLeft, Save, Eye, Loader2, LayoutDashboard, Type, FileText,
-  Phone as PhoneIcon, Image as ImageIcon, Link, LogOut, ImagePlus, Trash2, Plus,
+  Phone as PhoneIcon, Image as ImageIcon, Link, LogOut, ImagePlus, Trash2, Plus, GraduationCap,
 } from "lucide-react";
+import AdminStudyMaterial from "@/components/AdminStudyMaterial";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
