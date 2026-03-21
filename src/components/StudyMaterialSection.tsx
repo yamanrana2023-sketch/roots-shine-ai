@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { fetchMaterials, StudyMaterial } from "@/lib/studyMaterials";
 import { BookOpen, FileText, Download, Loader2, Search, GraduationCap } from "lucide-react";
 
-const CLASSES = ["Class 9", "Class 10", "Class 11", "Class 12"];
+const CLASSES = ["Class 5", "Class 6", "Class 9", "Class 10", "Class 11", "Class 12"];
 
 export default function StudyMaterialSection() {
   const [materials, setMaterials] = useState<StudyMaterial[]>([]);
