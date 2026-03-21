@@ -7,7 +7,7 @@ const CLASSES = ["Class 5", "Class 6", "Class 9", "Class 10", "Class 11", "Class
 export default function StudyMaterialSection() {
   const [materials, setMaterials] = useState<StudyMaterial[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeClass, setActiveClass] = useState("Class 9");
+  const [activeClass, setActiveClass] = useState("Class 5");
   const [activeType, setActiveType] = useState<"All" | "Notes" | "Homework">("All");
   const [searchQuery, setSearchQuery] = useState("");
 
