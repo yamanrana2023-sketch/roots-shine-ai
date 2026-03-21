@@ -8,10 +8,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-const CLASSES = ["Class 9", "Class 10", "Class 11", "Class 12"];
+const CLASSES = ["Class 5", "Class 6", "Class 9", "Class 10", "Class 11", "Class 12"];
 const TYPES: ("Notes" | "Homework")[] = ["Notes", "Homework"];
 
-const emptyForm: NewStudyMaterial = { title: "", type: "Notes", class: "Class 9", subject: "", pdf_link: "" };
+const emptyForm: NewStudyMaterial = { title: "", type: "Notes", class: "Class 5", subject: "", pdf_link: "" };
 
 export default function AdminStudyMaterial() {
   const [materials, setMaterials] = useState<StudyMaterial[]>([]);
