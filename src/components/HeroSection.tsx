@@ -47,12 +47,13 @@ export default function HeroSection() {
               Register Now
               <ArrowRight className="h-4 w-4" />
             </a>
-            <a
-              href="#about"
+            <button
+              onClick={() => navigate("/pay-fees")}
               className="inline-flex items-center gap-2 bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground px-7 py-4 rounded-xl text-base font-semibold hover:bg-primary-foreground/15 active:scale-[0.97] transition-all duration-200 backdrop-blur-sm"
             >
-              Learn More
-            </a>
+              <CreditCard className="h-4 w-4" />
+              Pay Fees
+            </button>
           </div>
         </div>
 
