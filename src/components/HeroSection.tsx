@@ -1,9 +1,11 @@
-import { ArrowRight, Users, Award, BookOpen, Star } from "lucide-react";
+import { ArrowRight, Users, Award, BookOpen, Star, CreditCard } from "lucide-react";
 import { useSiteContent } from "@/contexts/SiteContentContext";
+import { useNavigate } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.jpg";
 
 export default function HeroSection() {
   const { content } = useSiteContent();
+  const navigate = useNavigate();
   const bgImage = content.heroBgUrl || heroBg;
 
   const stats = [
@@ -45,12 +47,13 @@ export default function HeroSection() {
               Register Now
               <ArrowRight className="h-4 w-4" />
             </a>
-            <a
-              href="#about"
+            <button
+              onClick={() => navigate("/pay-fees")}
               className="inline-flex items-center gap-2 bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground px-7 py-4 rounded-xl text-base font-semibold hover:bg-primary-foreground/15 active:scale-[0.97] transition-all duration-200 backdrop-blur-sm"
             >
-              Learn More
-            </a>
+              <CreditCard className="h-4 w-4" />
+              Pay Fees
+            </button>
           </div>
         </div>
 

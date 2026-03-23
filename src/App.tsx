@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SiteContentProvider } from "@/contexts/SiteContentContext";
 import Index from "./pages/Index.tsx";
 import AdminPanel from "./pages/AdminPanel.tsx";
+import PayFees from "./pages/PayFees.tsx";
+import PaymentSuccess from "./pages/PaymentSuccess.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -20,6 +22,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/pay-fees" element={<PayFees />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </SiteContentProvider>
