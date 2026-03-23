@@ -5,12 +5,28 @@ import { signIn, signOut, getSession } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import {
   ArrowLeft, Save, Eye, Loader2, LayoutDashboard, Type, FileText,
-  Phone as PhoneIcon, Image as ImageIcon, Link, LogOut, ImagePlus, Trash2, Plus, GraduationCap,
+  Phone as PhoneIcon, Image as ImageIcon, Link, LogOut, ImagePlus, Trash2, Plus,
+  GraduationCap, Users, CreditCard, BookOpen, BarChart3, Settings,
 } from "lucide-react";
 import AdminStudyMaterial from "@/components/AdminStudyMaterial";
+import AdminDashboard from "@/components/admin/AdminDashboard";
+import AdminStudents from "@/components/admin/AdminStudents";
+import AdminPayments from "@/components/admin/AdminPayments";
+import AdminCourses from "@/components/admin/AdminCourses";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
+
+type Tab = "dashboard" | "students" | "payments" | "courses" | "content" | "study-material";
+
+const TABS: { id: Tab; label: string; icon: any }[] = [
+  { id: "dashboard", label: "Dashboard", icon: BarChart3 },
+  { id: "students", label: "Students", icon: Users },
+  { id: "payments", label: "Payments", icon: CreditCard },
+  { id: "courses", label: "Courses", icon: BookOpen },
+  { id: "study-material", label: "Study Material", icon: GraduationCap },
+  { id: "content", label: "Site Content", icon: Settings },
+];
 
 export default function AdminPanel() {
   const navigate = useNavigate();
@@ -19,6 +35,7 @@ export default function AdminPanel() {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<Tab>("dashboard");
   const { content, loading, updateContent } = useSiteContent();
   const [form, setForm] = useState<SiteContent>(content);
   const [saving, setSaving] = useState(false);
@@ -67,19 +84,13 @@ export default function AdminPanel() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const addPoster = () => {
-    update("posters", [...form.posters, ""]);
-  };
-
+  const addPoster = () => update("posters", [...form.posters, ""]);
   const updatePoster = (index: number, value: string) => {
     const posters = [...form.posters];
     posters[index] = value;
     update("posters", posters);
   };
-
-  const removePoster = (index: number) => {
-    update("posters", form.posters.filter((_, i) => i !== index));
-  };
+  const removePoster = (index: number) => update("posters", form.posters.filter((_, i) => i !== index));
 
   if (authLoading) {
     return (
@@ -100,25 +111,9 @@ export default function AdminPanel() {
           </div>
           <h2 className="text-2xl font-display font-bold text-foreground mb-1 text-center">Admin Panel</h2>
           <p className="text-sm text-muted-foreground mb-6 text-center">Sign in to manage your website</p>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            className="w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 mb-3 transition-shadow"
-          />
-          <input
-            type="password"
-            value={pass}
-            onChange={(e) => setPass(e.target.value)}
-            placeholder="Password"
-            className="w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 mb-4 transition-shadow"
-          />
-          <button
-            type="submit"
-            disabled={loginLoading}
-            className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold hover:opacity-90 active:scale-[0.97] transition-all disabled:opacity-60 flex items-center justify-center gap-2"
-          >
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 mb-3 transition-shadow" />
+          <input type="password" value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Password" className="w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 mb-4 transition-shadow" />
+          <button type="submit" disabled={loginLoading} className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold hover:opacity-90 active:scale-[0.97] transition-all disabled:opacity-60 flex items-center justify-center gap-2">
             {loginLoading && <Loader2 className="h-4 w-4 animate-spin" />}
             {loginLoading ? "Signing in..." : "Sign In"}
           </button>
@@ -146,7 +141,7 @@ export default function AdminPanel() {
             </button>
             <div className="flex items-center gap-2">
               <LayoutDashboard className="h-5 w-5 text-primary" />
-              <h1 className="text-lg font-display font-bold text-foreground">Site Manager</h1>
+              <h1 className="text-lg font-display font-bold text-foreground">Admin Panel</h1>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -157,108 +152,98 @@ export default function AdminPanel() {
             <a href="/" target="_blank" className="hidden sm:inline-flex items-center gap-2 border border-border px-4 py-2 rounded-xl text-sm font-medium hover:bg-muted transition-colors">
               <Eye className="h-4 w-4" /> Preview
             </a>
-            <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.97] transition-all disabled:opacity-60">
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {saving ? "Saving..." : "Save"}
-            </button>
+            {activeTab === "content" && (
+              <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.97] transition-all disabled:opacity-60">
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                {saving ? "Saving..." : "Save"}
+              </button>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 max-w-3xl space-y-6">
-        {/* Hero */}
-        <Section title="Hero Section" icon={<Type className="h-5 w-5 text-primary" />}>
-          <Field label="Main Headline" value={form.heroTitle} onChange={(v) => update("heroTitle", v)} />
-          <Field label="Subtitle" value={form.heroSubtitle} onChange={(v) => update("heroSubtitle", v)} textarea />
-          <Field label="Background Image URL (leave empty for default)" value={form.heroBgUrl} onChange={(v) => update("heroBgUrl", v)} />
-          {form.heroBgUrl && (
-            <div className="mt-2">
-              <p className="text-xs text-muted-foreground mb-2">Preview:</p>
-              <img src={form.heroBgUrl} alt="Hero BG" className="h-24 w-40 rounded-xl object-cover border border-border" />
-            </div>
-          )}
-        </Section>
-
-        {/* Registration */}
-        <Section title="Registration Form" icon={<Link className="h-5 w-5 text-primary" />}>
-          <Field label="Google Form URL" value={form.registrationFormUrl} onChange={(v) => update("registrationFormUrl", v)} />
-        </Section>
-
-        {/* About */}
-        <Section title="About Section" icon={<FileText className="h-5 w-5 text-primary" />}>
-          <Field label="Section Title" value={form.aboutTitle} onChange={(v) => update("aboutTitle", v)} />
-          <Field label="Description" value={form.aboutText} onChange={(v) => update("aboutText", v)} textarea />
-          <Field label="Image URL" value={form.aboutImageUrl} onChange={(v) => update("aboutImageUrl", v)} />
-          <Field label="Video URL (optional, replaces image)" value={form.aboutVideoUrl} onChange={(v) => update("aboutVideoUrl", v)} />
-          {form.aboutImageUrl && (
-            <div className="mt-2">
-              <p className="text-xs text-muted-foreground mb-2">Preview:</p>
-              <img src={form.aboutImageUrl} alt="About" className="h-24 w-32 rounded-xl object-cover border border-border" />
-            </div>
-          )}
-        </Section>
-
-        {/* Course Posters */}
-        <Section title="Course Posters" icon={<ImagePlus className="h-5 w-5 text-primary" />}>
-          <p className="text-xs text-muted-foreground mb-3">Add poster image URLs. These will show as a scrollable gallery on the website.</p>
-          <div className="space-y-3">
-            {form.posters.map((url, i) => (
-              <div key={i} className="flex gap-3 items-start">
-                <div className="flex-1">
-                  <input
-                    value={url}
-                    onChange={(e) => updatePoster(i, e.target.value)}
-                    placeholder={`Poster ${i + 1} URL`}
-                    className="w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
-                  />
-                  {url && (
-                    <img src={url} alt={`Poster ${i + 1}`} className="mt-2 h-20 rounded-lg object-cover border border-border" />
-                  )}
-                </div>
-                <button
-                  onClick={() => removePoster(i)}
-                  className="mt-2 p-2 rounded-lg hover:bg-destructive/10 text-destructive/70 hover:text-destructive transition-colors"
-                  title="Remove poster"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-          </div>
-          <button
-            onClick={addPoster}
-            className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-          >
-            <Plus className="h-4 w-4" /> Add Poster
-          </button>
-        </Section>
-
-        {/* Study Material */}
-        <Section title="Manage Study Material" icon={<GraduationCap className="h-5 w-5 text-primary" />}>
-          <AdminStudyMaterial />
-        </Section>
-
-        {/* Contact */}
-        <Section title="Contact Info" icon={<PhoneIcon className="h-5 w-5 text-primary" />}>
-          <Field label="Phone Number" value={form.contactPhone} onChange={(v) => update("contactPhone", v)} />
-          <Field label="Address" value={form.contactAddress} onChange={(v) => update("contactAddress", v)} textarea />
-          <Field label="Google Maps Link" value={form.googleMapUrl} onChange={(v) => update("googleMapUrl", v)} />
-        </Section>
-
-        {/* Branding */}
-        <Section title="Branding" icon={<ImageIcon className="h-5 w-5 text-primary" />}>
-          <Field label="Logo URL" value={form.logoUrl} onChange={(v) => update("logoUrl", v)} />
-          {form.logoUrl && (
-            <div className="mt-2">
-              <p className="text-xs text-muted-foreground mb-2">Logo Preview:</p>
-              <img src={form.logoUrl} alt="Logo" className="h-16 w-16 rounded-xl object-cover border border-border" />
-            </div>
-          )}
-        </Section>
-
-        <div className="text-center text-xs text-muted-foreground pb-8 pt-4">
-          Changes reflect immediately after save.
+      {/* Tabs */}
+      <div className="bg-card border-b border-border overflow-x-auto">
+        <div className="container mx-auto px-4 flex gap-1">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                activeTab === tab.id
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <tab.icon className="h-4 w-4" />
+              {tab.label}
+            </button>
+          ))}
         </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {activeTab === "dashboard" && <AdminDashboard />}
+        {activeTab === "students" && <AdminStudents />}
+        {activeTab === "payments" && <AdminPayments />}
+        {activeTab === "courses" && <AdminCourses />}
+        {activeTab === "study-material" && (
+          <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
+            <AdminStudyMaterial />
+          </div>
+        )}
+        {activeTab === "content" && (
+          <div className="space-y-6">
+            <Section title="Hero Section" icon={<Type className="h-5 w-5 text-primary" />}>
+              <Field label="Main Headline" value={form.heroTitle} onChange={(v) => update("heroTitle", v)} />
+              <Field label="Subtitle" value={form.heroSubtitle} onChange={(v) => update("heroSubtitle", v)} textarea />
+              <Field label="Background Image URL" value={form.heroBgUrl} onChange={(v) => update("heroBgUrl", v)} />
+              {form.heroBgUrl && <img src={form.heroBgUrl} alt="Hero BG" className="mt-2 h-24 w-40 rounded-xl object-cover border border-border" />}
+            </Section>
+
+            <Section title="Registration Form" icon={<Link className="h-5 w-5 text-primary" />}>
+              <Field label="Google Form URL" value={form.registrationFormUrl} onChange={(v) => update("registrationFormUrl", v)} />
+            </Section>
+
+            <Section title="About Section" icon={<FileText className="h-5 w-5 text-primary" />}>
+              <Field label="Section Title" value={form.aboutTitle} onChange={(v) => update("aboutTitle", v)} />
+              <Field label="Description" value={form.aboutText} onChange={(v) => update("aboutText", v)} textarea />
+              <Field label="Image URL" value={form.aboutImageUrl} onChange={(v) => update("aboutImageUrl", v)} />
+              <Field label="Video URL (optional)" value={form.aboutVideoUrl} onChange={(v) => update("aboutVideoUrl", v)} />
+            </Section>
+
+            <Section title="Course Posters" icon={<ImagePlus className="h-5 w-5 text-primary" />}>
+              <p className="text-xs text-muted-foreground mb-3">Add poster image URLs for the scrollable gallery.</p>
+              <div className="space-y-3">
+                {form.posters.map((url, i) => (
+                  <div key={i} className="flex gap-3 items-start">
+                    <div className="flex-1">
+                      <input value={url} onChange={(e) => updatePoster(i, e.target.value)} placeholder={`Poster ${i + 1} URL`} className="w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
+                      {url && <img src={url} alt={`Poster ${i + 1}`} className="mt-2 h-20 rounded-lg object-cover border border-border" />}
+                    </div>
+                    <button onClick={() => removePoster(i)} className="mt-2 p-2 rounded-lg hover:bg-destructive/10 text-destructive/70 hover:text-destructive transition-colors">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button onClick={addPoster} className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+                <Plus className="h-4 w-4" /> Add Poster
+              </button>
+            </Section>
+
+            <Section title="Contact Info" icon={<PhoneIcon className="h-5 w-5 text-primary" />}>
+              <Field label="Phone Number" value={form.contactPhone} onChange={(v) => update("contactPhone", v)} />
+              <Field label="Address" value={form.contactAddress} onChange={(v) => update("contactAddress", v)} textarea />
+              <Field label="Google Maps Link" value={form.googleMapUrl} onChange={(v) => update("googleMapUrl", v)} />
+            </Section>
+
+            <Section title="Branding" icon={<ImageIcon className="h-5 w-5 text-primary" />}>
+              <Field label="Logo URL" value={form.logoUrl} onChange={(v) => update("logoUrl", v)} />
+              {form.logoUrl && <img src={form.logoUrl} alt="Logo" className="mt-2 h-16 w-16 rounded-xl object-cover border border-border" />}
+            </Section>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -281,11 +266,7 @@ function Field({ label, value, onChange, textarea }: { label: string; value: str
   return (
     <div>
       <label className="text-sm font-medium text-foreground block mb-1.5">{label}</label>
-      {textarea ? (
-        <textarea value={value} onChange={(e) => onChange(e.target.value)} rows={4} className={cls} />
-      ) : (
-        <input value={value} onChange={(e) => onChange(e.target.value)} className={cls} />
-      )}
+      {textarea ? <textarea value={value} onChange={(e) => onChange(e.target.value)} rows={4} className={cls} /> : <input value={value} onChange={(e) => onChange(e.target.value)} className={cls} />}
     </div>
   );
 }
