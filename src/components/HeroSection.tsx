@@ -5,6 +5,7 @@ import heroBg from "@/assets/hero-bg.jpg";
 
 export default function HeroSection() {
   const { content } = useSiteContent();
+  const navigate = useNavigate();
   const bgImage = content.heroBgUrl || heroBg;
 
   const stats = [
