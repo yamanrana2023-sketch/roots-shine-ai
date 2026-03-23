@@ -1,5 +1,6 @@
-import { ArrowRight, Users, Award, BookOpen, Star } from "lucide-react";
+import { ArrowRight, Users, Award, BookOpen, Star, CreditCard } from "lucide-react";
 import { useSiteContent } from "@/contexts/SiteContentContext";
+import { useNavigate } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.jpg";
 
 export default function HeroSection() {
