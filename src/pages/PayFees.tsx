@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, CreditCard, Loader2, User, Phone, BookOpen } from "lucide-react";
 import { fetchCourses, Course } from "@/lib/courses";
 import { addStudent, addPayment } from "@/lib/students";
@@ -7,14 +7,19 @@ import { toast } from "sonner";
 
 export default function PayFees() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const preselectedCourseId = (location.state as any)?.courseId || "";
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState({ name: "", phone: "", courseId: "" });
+  const [form, setForm] = useState({ name: "", phone: "", courseId: preselectedCourseId });
 
   useEffect(() => {
     fetchCourses()
-      .then(setCourses)
+      .then((c) => {
+        setCourses(c);
+        if (preselectedCourseId) setForm((f) => ({ ...f, courseId: preselectedCourseId }));
+      })
       .catch(() => toast.error("Failed to load courses"))
       .finally(() => setLoading(false));
   }, []);
@@ -49,7 +54,6 @@ export default function PayFees() {
         date: new Date().toISOString(),
       });
 
-      // Razorpay integration placeholder
       toast.info("Razorpay integration coming soon! Payment recorded as pending.");
       navigate("/payment-success", {
         state: {
@@ -68,9 +72,13 @@ export default function PayFees() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Background glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[400px] h-[300px] bg-accent/10 rounded-full blur-[120px] pointer-events-none" />
+
       {/* Header */}
-      <div className="bg-card/80 backdrop-blur-md border-b border-border sticky top-0 z-10">
+      <div className="glass border-b border-border sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center gap-3">
           <button onClick={() => navigate("/")} className="p-2 rounded-xl hover:bg-muted active:scale-95 transition-all">
             <ArrowLeft className="h-5 w-5" />
@@ -80,11 +88,11 @@ export default function PayFees() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-10 max-w-lg">
-        <div className="bg-card rounded-2xl border border-border p-8 shadow-sm">
+      <div className="relative container mx-auto px-4 py-10 max-w-lg">
+        <div className="bg-card rounded-2xl border border-border p-8 shadow-sm gradient-border">
           <div className="text-center mb-8">
-            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-              <CreditCard className="h-8 w-8 text-primary" />
+            <div className="h-16 w-16 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-4 glow-primary">
+              <CreditCard className="h-8 w-8 text-primary-foreground" />
             </div>
             <h2 className="text-2xl font-display font-bold text-foreground">Fee Payment</h2>
             <p className="text-sm text-muted-foreground mt-1">Fill in your details to proceed</p>
@@ -96,7 +104,6 @@ export default function PayFees() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Name */}
               <div>
                 <label className="text-sm font-medium text-foreground flex items-center gap-2 mb-1.5">
                   <User className="h-4 w-4 text-muted-foreground" /> Student Name
@@ -109,7 +116,6 @@ export default function PayFees() {
                 />
               </div>
 
-              {/* Phone */}
               <div>
                 <label className="text-sm font-medium text-foreground flex items-center gap-2 mb-1.5">
                   <Phone className="h-4 w-4 text-muted-foreground" /> Phone Number
@@ -123,7 +129,6 @@ export default function PayFees() {
                 />
               </div>
 
-              {/* Course */}
               <div>
                 <label className="text-sm font-medium text-foreground flex items-center gap-2 mb-1.5">
                   <BookOpen className="h-4 w-4 text-muted-foreground" /> Select Course
@@ -142,11 +147,10 @@ export default function PayFees() {
                 </select>
               </div>
 
-              {/* Price Display */}
               {selectedCourse && (
-                <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 text-center">
-                  <p className="text-sm text-muted-foreground">Amount to Pay</p>
-                  <p className="text-3xl font-display font-bold text-primary mt-1">
+                <div className="gradient-bg rounded-xl p-4 text-center">
+                  <p className="text-sm text-primary-foreground/70">Amount to Pay</p>
+                  <p className="text-3xl font-display font-bold text-primary-foreground mt-1">
                     ₹{selectedCourse.price.toLocaleString("en-IN")}
                   </p>
                 </div>
@@ -155,16 +159,12 @@ export default function PayFees() {
               <button
                 type="submit"
                 disabled={submitting || !form.courseId}
-                className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 active:scale-[0.97] transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+                className="w-full gradient-bg text-primary-foreground py-3.5 rounded-xl font-semibold hover:brightness-110 active:scale-[0.97] transition-all disabled:opacity-50 flex items-center justify-center gap-2 glow-primary"
               >
                 {submitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" /> Processing...
-                  </>
+                  <><Loader2 className="h-4 w-4 animate-spin" /> Processing...</>
                 ) : (
-                  <>
-                    <CreditCard className="h-4 w-4" /> Proceed to Pay
-                  </>
+                  <><CreditCard className="h-4 w-4" /> Proceed to Pay</>
                 )}
               </button>
             </form>

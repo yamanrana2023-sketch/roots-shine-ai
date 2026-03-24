@@ -8,6 +8,8 @@ import Index from "./pages/Index.tsx";
 import AdminPanel from "./pages/AdminPanel.tsx";
 import PayFees from "./pages/PayFees.tsx";
 import PaymentSuccess from "./pages/PaymentSuccess.tsx";
+import Courses from "./pages/Courses.tsx";
+import CourseAccess from "./pages/CourseAccess.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -24,6 +26,8 @@ const App = () => (
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/pay-fees" element={<PayFees />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/courses" element={<Courses />} />
+            <Route path="/course-access" element={<CourseAccess />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </SiteContentProvider>

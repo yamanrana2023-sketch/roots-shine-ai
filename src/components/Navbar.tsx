@@ -24,10 +24,12 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-background/95 backdrop-blur-md border-b border-border/50 shadow-sm" : "bg-transparent"}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "glass shadow-sm" : "bg-transparent"}`}>
       <div className="container mx-auto flex items-center justify-between h-16 md:h-18 px-4">
         <a href="#home" className="flex items-center gap-3">
-          <img src={content.logoUrl} alt="The Roots Foundation" className="h-10 w-10 rounded-lg object-cover" />
+          {content.logoUrl && (
+            <img src={content.logoUrl} alt="Logo" className="h-10 w-10 rounded-lg object-cover" />
+          )}
           <span className={`font-display text-lg font-bold hidden sm:block transition-colors duration-300 ${scrolled ? "text-foreground" : "text-primary-foreground"}`}>
             The Roots Foundation
           </span>
@@ -41,7 +43,7 @@ export default function Navbar() {
           ))}
           <button
             onClick={() => navigate("/pay-fees")}
-            className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-5 py-2.5 rounded-xl text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-all duration-200 shadow-md shadow-accent/20"
+            className="inline-flex items-center gap-2 gradient-bg text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-all duration-200 glow-primary"
           >
             <CreditCard className="h-4 w-4" />
             Pay Fees
@@ -65,7 +67,7 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <div className="md:hidden bg-background border-t border-border px-4 pb-4 shadow-lg animate-reveal-up">
+        <div className="md:hidden glass px-4 pb-4 shadow-lg animate-reveal-up">
           {links.map((l) => (
             <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="block py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
               {l.label}
@@ -73,7 +75,7 @@ export default function Navbar() {
           ))}
           <button
             onClick={() => { setOpen(false); navigate("/pay-fees"); }}
-            className="inline-flex items-center gap-2 mt-2 bg-accent text-accent-foreground px-5 py-2.5 rounded-xl text-sm font-semibold w-full justify-center"
+            className="inline-flex items-center gap-2 mt-2 gradient-bg text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold w-full justify-center"
           >
             <CreditCard className="h-4 w-4" />
             Pay Fees
