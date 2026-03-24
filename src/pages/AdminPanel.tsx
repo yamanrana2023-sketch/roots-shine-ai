@@ -6,26 +6,30 @@ import { supabase } from "@/lib/supabase";
 import {
   ArrowLeft, Save, Eye, Loader2, LayoutDashboard, Type, FileText,
   Phone as PhoneIcon, Image as ImageIcon, Link, LogOut, ImagePlus, Trash2, Plus,
-  GraduationCap, Users, CreditCard, BookOpen, BarChart3, Settings,
+  GraduationCap, Users, CreditCard, BookOpen, BarChart3, Settings, Shield,
 } from "lucide-react";
 import AdminStudyMaterial from "@/components/AdminStudyMaterial";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import AdminStudents from "@/components/admin/AdminStudents";
 import AdminPayments from "@/components/admin/AdminPayments";
 import AdminCourses from "@/components/admin/AdminCourses";
+import AdminAccessControl from "@/components/admin/AdminAccessControl";
+import AdminSettings from "@/components/admin/AdminSettings";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
 
-type Tab = "dashboard" | "students" | "payments" | "courses" | "content" | "study-material";
+type Tab = "dashboard" | "students" | "payments" | "courses" | "access" | "content" | "study-material" | "settings";
 
 const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "dashboard", label: "Dashboard", icon: BarChart3 },
   { id: "students", label: "Students", icon: Users },
   { id: "payments", label: "Payments", icon: CreditCard },
   { id: "courses", label: "Courses", icon: BookOpen },
+  { id: "access", label: "Access Control", icon: Shield },
   { id: "study-material", label: "Study Material", icon: GraduationCap },
   { id: "content", label: "Site Content", icon: Settings },
+  { id: "settings", label: "Settings", icon: Settings },
 ];
 
 export default function AdminPanel() {
@@ -94,7 +98,7 @@ export default function AdminPanel() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-muted">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -102,18 +106,19 @@ export default function AdminPanel() {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
-        <form onSubmit={handleLogin} className="bg-card rounded-2xl shadow-xl p-8 w-full max-w-sm border border-border">
+      <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden p-4">
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
+        <form onSubmit={handleLogin} className="relative bg-card rounded-2xl shadow-xl p-8 w-full max-w-sm border border-border gradient-border">
           <div className="flex items-center justify-center mb-6">
-            <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-              <LayoutDashboard className="h-7 w-7 text-primary" />
+            <div className="h-14 w-14 rounded-2xl gradient-bg flex items-center justify-center glow-primary">
+              <LayoutDashboard className="h-7 w-7 text-primary-foreground" />
             </div>
           </div>
           <h2 className="text-2xl font-display font-bold text-foreground mb-1 text-center">Admin Panel</h2>
           <p className="text-sm text-muted-foreground mb-6 text-center">Sign in to manage your website</p>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 mb-3 transition-shadow" />
-          <input type="password" value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Password" className="w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 mb-4 transition-shadow" />
-          <button type="submit" disabled={loginLoading} className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold hover:opacity-90 active:scale-[0.97] transition-all disabled:opacity-60 flex items-center justify-center gap-2">
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 mb-3 transition-shadow" />
+          <input type="password" value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Password" className="w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 mb-4 transition-shadow" />
+          <button type="submit" disabled={loginLoading} className="w-full gradient-bg text-primary-foreground py-3 rounded-xl font-semibold hover:brightness-110 active:scale-[0.97] transition-all disabled:opacity-60 flex items-center justify-center gap-2 glow-primary">
             {loginLoading && <Loader2 className="h-4 w-4 animate-spin" />}
             {loginLoading ? "Signing in..." : "Sign In"}
           </button>
@@ -124,16 +129,16 @@ export default function AdminPanel() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-muted">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-muted/50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-card/80 backdrop-blur-md border-b border-border sticky top-0 z-10">
+      <div className="glass border-b border-border sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={() => navigate("/")} className="p-2 rounded-xl hover:bg-muted active:scale-95 transition-all">
@@ -153,7 +158,7 @@ export default function AdminPanel() {
               <Eye className="h-4 w-4" /> Preview
             </a>
             {activeTab === "content" && (
-              <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.97] transition-all disabled:opacity-60">
+              <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-2 gradient-bg text-primary-foreground px-5 py-2 rounded-xl text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-all disabled:opacity-60">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 {saving ? "Saving..." : "Save"}
               </button>
@@ -187,11 +192,13 @@ export default function AdminPanel() {
         {activeTab === "students" && <AdminStudents />}
         {activeTab === "payments" && <AdminPayments />}
         {activeTab === "courses" && <AdminCourses />}
+        {activeTab === "access" && <AdminAccessControl />}
         {activeTab === "study-material" && (
           <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
             <AdminStudyMaterial />
           </div>
         )}
+        {activeTab === "settings" && <AdminSettings />}
         {activeTab === "content" && (
           <div className="space-y-6">
             <Section title="Hero Section" icon={<Type className="h-5 w-5 text-primary" />}>
@@ -251,7 +258,7 @@ export default function AdminPanel() {
 
 function Section({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="bg-card rounded-2xl border border-border p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+    <div className="bg-card rounded-2xl border border-border p-6 shadow-sm glow-card">
       <div className="flex items-center gap-3 mb-5 pb-4 border-b border-border">
         {icon}
         <h3 className="font-display font-bold text-foreground text-lg">{title}</h3>

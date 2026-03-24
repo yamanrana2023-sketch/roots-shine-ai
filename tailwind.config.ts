@@ -59,8 +59,8 @@ export default {
         },
       },
       fontFamily: {
-        display: ['"Playfair Display"', 'serif'],
-        body: ['"DM Sans"', 'system-ui', 'sans-serif'],
+        display: ['"Space Grotesk"', '"Inter"', 'sans-serif'],
+        body: ['"Inter"', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         lg: "var(--radius)",
