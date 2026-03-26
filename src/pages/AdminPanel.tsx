@@ -198,6 +198,7 @@ export default function AdminPanel() {
         {activeTab === "courses" && <AdminCourses />}
         {activeTab === "products" && <AdminProducts />}
         {activeTab === "orders" && <AdminOrders />}
+        {activeTab === "access" && <AdminAccessControl />}
         {activeTab === "study-material" && (
           <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
             <AdminStudyMaterial />
