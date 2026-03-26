@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 import {
   ArrowLeft, Save, Eye, Loader2, LayoutDashboard, Type, FileText,
   Phone as PhoneIcon, Image as ImageIcon, Link, LogOut, ImagePlus, Trash2, Plus,
-  GraduationCap, Users, CreditCard, BookOpen, BarChart3, Settings, Shield,
+  GraduationCap, Users, CreditCard, BookOpen, BarChart3, Settings, Shield, ShoppingBag, Package,
 } from "lucide-react";
 import AdminStudyMaterial from "@/components/AdminStudyMaterial";
 import AdminDashboard from "@/components/admin/AdminDashboard";
@@ -15,18 +15,22 @@ import AdminPayments from "@/components/admin/AdminPayments";
 import AdminCourses from "@/components/admin/AdminCourses";
 import AdminAccessControl from "@/components/admin/AdminAccessControl";
 import AdminSettings from "@/components/admin/AdminSettings";
+import AdminProducts from "@/components/admin/AdminProducts";
+import AdminOrders from "@/components/admin/AdminOrders";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
 
-type Tab = "dashboard" | "students" | "payments" | "courses" | "access" | "content" | "study-material" | "settings";
+type Tab = "dashboard" | "students" | "payments" | "courses" | "products" | "orders" | "access" | "content" | "study-material" | "settings";
 
 const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "dashboard", label: "Dashboard", icon: BarChart3 },
   { id: "students", label: "Students", icon: Users },
   { id: "payments", label: "Payments", icon: CreditCard },
   { id: "courses", label: "Courses", icon: BookOpen },
-  { id: "access", label: "Access Control", icon: Shield },
+  { id: "products", label: "Products", icon: Package },
+  { id: "orders", label: "Orders", icon: ShoppingBag },
+  { id: "access", label: "Access", icon: Shield },
   { id: "study-material", label: "Study Material", icon: GraduationCap },
   { id: "content", label: "Site Content", icon: Settings },
   { id: "settings", label: "Settings", icon: Settings },
@@ -192,6 +196,8 @@ export default function AdminPanel() {
         {activeTab === "students" && <AdminStudents />}
         {activeTab === "payments" && <AdminPayments />}
         {activeTab === "courses" && <AdminCourses />}
+        {activeTab === "products" && <AdminProducts />}
+        {activeTab === "orders" && <AdminOrders />}
         {activeTab === "access" && <AdminAccessControl />}
         {activeTab === "study-material" && (
           <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">

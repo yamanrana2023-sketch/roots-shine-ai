@@ -19,6 +19,7 @@ export default function Navbar() {
     { label: "Home", href: "#home" },
     { label: "About", href: "#about" },
     { label: "Courses", href: "#courses" },
+    { label: "Store", href: "/store", isRoute: true },
     { label: "Study Material", href: "#study-material" },
     { label: "Contact", href: "#contact" },
   ];
@@ -37,9 +38,15 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-6">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className={`text-sm font-medium transition-colors duration-200 ${scrolled ? "text-muted-foreground hover:text-primary" : "text-primary-foreground/70 hover:text-primary-foreground"}`}>
-              {l.label}
-            </a>
+            (l as any).isRoute ? (
+              <button key={l.href} onClick={() => navigate(l.href)} className={`text-sm font-medium transition-colors duration-200 ${scrolled ? "text-muted-foreground hover:text-primary" : "text-primary-foreground/70 hover:text-primary-foreground"}`}>
+                {l.label}
+              </button>
+            ) : (
+              <a key={l.href} href={l.href} className={`text-sm font-medium transition-colors duration-200 ${scrolled ? "text-muted-foreground hover:text-primary" : "text-primary-foreground/70 hover:text-primary-foreground"}`}>
+                {l.label}
+              </a>
+            )
           ))}
           <button
             onClick={() => navigate("/pay-fees")}
@@ -69,9 +76,15 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden glass px-4 pb-4 shadow-lg animate-reveal-up">
           {links.map((l) => (
-            <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="block py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-              {l.label}
-            </a>
+            (l as any).isRoute ? (
+              <button key={l.href} onClick={() => { setOpen(false); navigate(l.href); }} className="block py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors w-full text-left">
+                {l.label}
+              </button>
+            ) : (
+              <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="block py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+                {l.label}
+              </a>
+            )
           ))}
           <button
             onClick={() => { setOpen(false); navigate("/pay-fees"); }}
