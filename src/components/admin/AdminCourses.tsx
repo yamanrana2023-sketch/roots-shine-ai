@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 const CLASSES = ["Class 5", "Class 6", "Class 7", "Class 9", "Class 10", "Class 11", "Class 12"];
 
-const emptyForm: NewCourse = { name: "", price: 0, description: "", class: "Class 9", duration: "1 Year" };
+const emptyForm: NewCourse = { title: "", fees: 0, description: "", class: "Class 9", duration: "1 Year" };
 
 export default function AdminCourses() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -25,8 +25,8 @@ export default function AdminCourses() {
   useEffect(() => { load(); }, []);
 
   const handleSave = async () => {
-    if (!form.name.trim() || !form.price) {
-      toast.error("Name and price are required");
+    if (!form.title.trim() || !form.fees) {
+      toast.error("Name and fees are required");
       return;
     }
     try {
@@ -47,7 +47,7 @@ export default function AdminCourses() {
   };
 
   const handleEdit = (c: Course) => {
-    setForm({ name: c.name, price: c.price, description: c.description, class: c.class, duration: c.duration });
+    setForm({ title: c.title, fees: c.fees, description: c.description, class: c.class, duration: c.duration });
     setEditId(c.id);
     setShowForm(true);
   };
@@ -77,9 +77,9 @@ export default function AdminCourses() {
               <X className="h-4 w-4" />
             </button>
           </div>
-          <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Course Name" className="w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30" />
+          <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Course Name" className="w-full border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30" />
           <div className="grid grid-cols-2 gap-3">
-            <input type="number" value={form.price || ""} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })} placeholder="Price (₹)" className="border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            <input type="number" value={form.fees || ""} onChange={(e) => setForm({ ...form, fees: Number(e.target.value) })} placeholder="Fees (₹)" className="border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30" />
             <select value={form.class} onChange={(e) => setForm({ ...form, class: e.target.value })} className="border border-input rounded-xl px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30">
               {CLASSES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
@@ -105,8 +105,8 @@ export default function AdminCourses() {
           {courses.map((c) => (
             <div key={c.id} className="flex items-center justify-between bg-background rounded-xl border border-border p-4">
               <div>
-                <p className="font-medium text-foreground">{c.name}</p>
-                <p className="text-xs text-muted-foreground">{c.class} • {c.duration} • ₹{c.price.toLocaleString("en-IN")}</p>
+                <p className="font-medium text-foreground">{c.title}</p>
+                <p className="text-xs text-muted-foreground">{c.class} • {c.duration} • ₹{(c.fees ?? 0).toLocaleString("en-IN")}</p>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => handleEdit(c)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">

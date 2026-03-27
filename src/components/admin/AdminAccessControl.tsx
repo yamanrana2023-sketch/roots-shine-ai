@@ -67,7 +67,7 @@ export default function AdminAccessControl() {
           <input value={grantForm.phone} onChange={(e) => setGrantForm({ ...grantForm, phone: e.target.value })} placeholder="Phone number" className="w-full border border-input rounded-xl px-4 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30" />
           <select value={grantForm.courseId} onChange={(e) => setGrantForm({ ...grantForm, courseId: e.target.value })} className="w-full border border-input rounded-xl px-4 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30">
             <option value="">Select course...</option>
-            {courses.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            {courses.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
           </select>
           <button onClick={handleGrant} disabled={!grantForm.phone || !grantForm.courseId} className="gradient-bg text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold hover:brightness-110 disabled:opacity-50 transition-all">
             Confirm Grant

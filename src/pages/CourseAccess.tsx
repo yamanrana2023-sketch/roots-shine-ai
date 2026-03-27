@@ -11,6 +11,7 @@ export default function CourseAccess() {
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState<any[]>([]);
   const [checked, setChecked] = useState(!!phoneParam);
+  const [tableExists, setTableExists] = useState(true);
 
   useEffect(() => {
     if (phoneParam) checkAccess(phoneParam);
@@ -20,12 +21,18 @@ export default function CourseAccess() {
     setLoading(true);
     setCourses([]);
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("access")
-        .select("*, courses(name, description)")
+        .select("*, courses(title, description)")
         .eq("phone", ph)
         .eq("access_status", "active");
-      setCourses(data || []);
+      if (error) {
+        console.warn("access table not available:", error.message);
+        setTableExists(false);
+        setCourses([]);
+      } else {
+        setCourses(data || []);
+      }
     } catch {}
     setChecked(true);
     setLoading(false);
@@ -85,7 +92,7 @@ export default function CourseAccess() {
                 <p className="text-sm font-medium text-primary">✅ You have access to {courses.length} course(s):</p>
                 {courses.map((a: any) => (
                   <div key={a.id} className="bg-primary/5 border border-primary/20 rounded-xl p-4">
-                    <h4 className="font-display font-bold text-foreground">{a.courses?.name || "Course"}</h4>
+                    <h4 className="font-display font-bold text-foreground">{a.courses?.title || "Course"}</h4>
                     <p className="text-sm text-muted-foreground mt-1">{a.courses?.description || ""}</p>
                   </div>
                 ))}
@@ -93,7 +100,9 @@ export default function CourseAccess() {
             ) : (
               <div className="text-center py-8">
                 <Lock className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
-                <p className="text-muted-foreground text-sm">No active course access found for this phone number.</p>
+                <p className="text-muted-foreground text-sm">
+                  {!tableExists ? "Course access system is being set up." : "No active course access found for this phone number."}
+                </p>
                 <button
                   onClick={() => navigate("/pay-fees")}
                   className="mt-4 inline-flex items-center gap-2 gradient-bg text-primary-foreground px-6 py-2.5 rounded-xl text-sm font-semibold hover:brightness-110 transition-all"
