@@ -17,7 +17,10 @@ export async function fetchMaterials(): Promise<StudyMaterial[]> {
     .from("study_materials")
     .select("*")
     .order("created_at", { ascending: false });
-  if (error) throw error;
+  if (error) {
+    console.warn("study_materials table not found, returning empty array");
+    return [];
+  }
   return data || [];
 }
 

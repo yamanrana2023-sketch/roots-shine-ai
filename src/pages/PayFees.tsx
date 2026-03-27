@@ -42,25 +42,25 @@ export default function PayFees() {
       const student = await addStudent({
         name: form.name.trim(),
         phone: form.phone.trim(),
-        course: selectedCourse?.name || "",
+        course: selectedCourse?.title || "",
         payment_status: "pending",
       });
 
       await addPayment({
         student_id: student.id,
-        amount: selectedCourse?.price || 0,
+        amount: selectedCourse?.fees || 0,
         status: "pending",
         razorpay_payment_id: null,
         date: new Date().toISOString(),
       });
 
-      toast.info("Razorpay integration coming soon! Payment recorded as pending.");
+      toast.info("Payment recorded as pending.");
       navigate("/payment-success", {
         state: {
           studentName: form.name,
           phone: form.phone,
-          course: selectedCourse?.name,
-          amount: selectedCourse?.price,
+          course: selectedCourse?.title,
+          amount: selectedCourse?.fees,
           status: "pending",
         },
       });
@@ -73,11 +73,9 @@ export default function PayFees() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[300px] bg-accent/10 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* Header */}
       <div className="glass border-b border-border sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center gap-3">
           <button onClick={() => navigate("/")} className="p-2 rounded-xl hover:bg-muted active:scale-95 transition-all">
@@ -141,7 +139,7 @@ export default function PayFees() {
                   <option value="">Choose a course...</option>
                   {courses.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.name} — ₹{c.price.toLocaleString("en-IN")}
+                      {c.title} — ₹{(c.fees ?? 0).toLocaleString("en-IN")}
                     </option>
                   ))}
                 </select>
@@ -151,7 +149,7 @@ export default function PayFees() {
                 <div className="gradient-bg rounded-xl p-4 text-center">
                   <p className="text-sm text-primary-foreground/70">Amount to Pay</p>
                   <p className="text-3xl font-display font-bold text-primary-foreground mt-1">
-                    ₹{selectedCourse.price.toLocaleString("en-IN")}
+                    ₹{(selectedCourse.fees ?? 0).toLocaleString("en-IN")}
                   </p>
                 </div>
               )}

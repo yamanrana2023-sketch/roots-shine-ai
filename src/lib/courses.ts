@@ -2,8 +2,8 @@ import { supabase } from "./supabase";
 
 export interface Course {
   id: string;
-  name: string;
-  price: number;
+  title: string;
+  fees: number;
   description: string;
   class: string;
   duration: string;

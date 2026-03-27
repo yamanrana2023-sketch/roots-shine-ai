@@ -17,7 +17,6 @@ export default function Courses() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <div className="glass sticky top-0 z-10 border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center gap-3">
           <button onClick={() => navigate("/")} className="p-2 rounded-xl hover:bg-muted active:scale-95 transition-all">
@@ -49,17 +48,14 @@ export default function Courses() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {courses.map((course) => (
-              <div
-                key={course.id}
-                className="bg-card rounded-2xl border border-border p-6 glow-card gradient-border"
-              >
+              <div key={course.id} className="bg-card rounded-2xl border border-border p-6 glow-card gradient-border">
                 <div className="h-12 w-12 rounded-xl gradient-bg flex items-center justify-center mb-4">
                   <BookOpen className="h-6 w-6 text-primary-foreground" />
                 </div>
-                <h3 className="text-lg font-display font-bold text-foreground mb-2">{course.name}</h3>
+                <h3 className="text-lg font-display font-bold text-foreground mb-2">{course.title}</h3>
                 {course.class && (
                   <span className="inline-block text-xs font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full mb-3">
-                    Class {course.class}
+                    {course.class}
                   </span>
                 )}
                 <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{course.description}</p>
@@ -68,7 +64,7 @@ export default function Courses() {
                 )}
                 <div className="flex items-center justify-between mt-auto pt-4 border-t border-border">
                   <span className="text-2xl font-bold gradient-text font-display">
-                    ₹{course.price.toLocaleString("en-IN")}
+                    ₹{(course.fees ?? 0).toLocaleString("en-IN")}
                   </span>
                   <button
                     onClick={() => navigate("/pay-fees", { state: { courseId: course.id } })}

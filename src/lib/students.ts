@@ -35,7 +35,10 @@ export async function fetchStudents(): Promise<Student[]> {
     .from("students")
     .select("*")
     .order("created_at", { ascending: false });
-  if (error) throw error;
+  if (error) {
+    console.warn("students table error:", error.message);
+    return [];
+  }
   return data || [];
 }
 
@@ -57,9 +60,8 @@ export async function fetchPayments(): Promise<Payment[]> {
     .select("*, students(name, phone, course)")
     .order("date", { ascending: false });
   if (error) {
-    // Fallback without join
     const { data: d2, error: e2 } = await supabase.from("payments").select("*").order("date", { ascending: false });
-    if (e2) throw e2;
+    if (e2) return [];
     return d2 || [];
   }
   return (data || []).map((p: any) => ({
@@ -84,7 +86,10 @@ export async function updatePaymentStatus(id: string, status: "success" | "faile
 // Access
 export async function fetchAccess(): Promise<CourseAccess[]> {
   const { data, error } = await supabase.from("access").select("*").order("id", { ascending: false });
-  if (error) throw error;
+  if (error) {
+    console.warn("access table not found:", error.message);
+    return [];
+  }
   return data || [];
 }
 
@@ -104,7 +109,7 @@ export async function revokeAccess(id: string): Promise<void> {
 export async function fetchDashboardStats() {
   const [students, payments] = await Promise.all([fetchStudents(), fetchPayments()]);
   const totalStudents = students.length;
-  const totalRevenue = payments.filter(p => p.status === "success").reduce((s, p) => s + p.amount, 0);
+  const totalRevenue = payments.filter(p => p.status === "success").reduce((s, p) => s + (p.amount || 0), 0);
   const recentPayments = payments.slice(0, 5);
   const paidStudents = students.filter(s => s.payment_status === "paid").length;
   return { totalStudents, totalRevenue, recentPayments, paidStudents };
