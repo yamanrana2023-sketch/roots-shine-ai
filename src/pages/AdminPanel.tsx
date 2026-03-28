@@ -13,7 +13,6 @@ import AdminDashboard from "@/components/admin/AdminDashboard";
 import AdminStudents from "@/components/admin/AdminStudents";
 import AdminPayments from "@/components/admin/AdminPayments";
 import AdminCourses from "@/components/admin/AdminCourses";
-import AdminAccessControl from "@/components/admin/AdminAccessControl";
 import AdminSettings from "@/components/admin/AdminSettings";
 import AdminProducts from "@/components/admin/AdminProducts";
 import AdminOrders from "@/components/admin/AdminOrders";
@@ -21,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
 
-type Tab = "dashboard" | "students" | "payments" | "courses" | "products" | "orders" | "access" | "content" | "study-material" | "settings";
+type Tab = "dashboard" | "students" | "payments" | "courses" | "products" | "orders" | "content" | "study-material" | "settings";
 
 const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "dashboard", label: "Dashboard", icon: BarChart3 },
@@ -30,7 +29,6 @@ const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "courses", label: "Courses", icon: BookOpen },
   { id: "products", label: "Products", icon: Package },
   { id: "orders", label: "Orders", icon: ShoppingBag },
-  { id: "access", label: "Access", icon: Shield },
   { id: "study-material", label: "Study Material", icon: GraduationCap },
   { id: "content", label: "Site Content", icon: Settings },
   { id: "settings", label: "Settings", icon: Settings },
@@ -198,7 +196,6 @@ export default function AdminPanel() {
         {activeTab === "courses" && <AdminCourses />}
         {activeTab === "products" && <AdminProducts />}
         {activeTab === "orders" && <AdminOrders />}
-        {activeTab === "access" && <AdminAccessControl />}
         {activeTab === "study-material" && (
           <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
             <AdminStudyMaterial />
